@@ -9,7 +9,6 @@ import Catalogo from "./components/Catalogo";
 import NotFound from "./components/NotFound";
 import Rodape from "./components/Rodape";
 import "./index.css";
-import Livro from "./components/Livro";
 import axios from "axios";
 import ViewLivro from "./components/ViewLivro";
 
