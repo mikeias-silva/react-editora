@@ -1,35 +1,56 @@
-import Principal from "./components/Principal";
-import Rodape from "./components/Rodape";
+import React, { Component } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Topo from "./components/Topo";
-
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import { Routes } from "react-router-dom";
 import Home from "./components/Home";
-import Catalogo from "./components/Catalogo";
-import NotFound from "./components/NotFound";
 import Frontend from "./components/Frontend";
 import Programacao from "./components/Programacao";
 import Design from "./components/Design";
-import "../src/index.css"
+import Catalogo from "./components/Catalogo";
+import NotFound from "./components/NotFound";
+import Rodape from "./components/Rodape";
+import "./index.css";
+import Livro from "./components/Livro";
+import axios from "axios";
+import ViewLivro from "./components/ViewLivro";
 
+class App extends Component {
+  state = {
+    livros: []
+  }
 
-function App() {
-  return (
-    <Router>
-      <>
+  async componentDidMount() {
+    try {
+      const { data: livros } = await axios.get('/api/todosOsLivros.json');
+      this.setState({ livros })
+    } catch (error) {
+      console.log(error);
+      document
+        .querySelectorAll(".principal")[0]
+        .insertAdjacentHTML(
+          "beforeend",
+          "<p class='erro'>Mensagem de erro</p>"
+        );
+    }
+  }
+  render() {
+    return (
+      <Router>
         <Topo />
         <Routes>
-          <Route exact path="/" render={Home} />
-          <Route exact path="/frontend" render={() => <Frontend />} />
-          <Route exact path="/programacao" render={() => <Programacao />} />
-          <Route exact path="/design" render={() => <Design />} />
-          <Route exact path="/catalogo" render={() => <Catalogo />} />
-          <Route element={NotFound} />
+          <Route path="/" element={<Home livros={this.state.livros} />} />
+          <Route path="/frontend" element={<Frontend livros={this.state.livros} />} />
+          <Route path="/programacao" element={<Programacao livros={this.state.livros} />} />
+          <Route path="/design" element={<Design livros={this.state.livros} />} />
+
+          <Route path="/livro/:livroSlug" element={<ViewLivro livros={this.state.livros} />} />
+
+          <Route path="/catalogo" element={<Catalogo livros={this.state.livros} />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
-      </>
-    </Router>
-  );
+        <Rodape />
+      </Router>
+    );
+  }
 }
 
 export default App;
